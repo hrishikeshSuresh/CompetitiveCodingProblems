@@ -21,7 +21,6 @@ int main(int argc, const char *argv[]){
         }
         lli result = 0;
         for(auto i: sub_strings){
-            //cout <<  i.second << endl;
             result += (i.second*(i.second-1))/2;
         }
         cout << result << endl;
