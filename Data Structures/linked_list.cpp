@@ -63,6 +63,30 @@ void reverse_linked_list(NODE **head){
 	return;
 }
 
+void insertAtAnyPosition(NODE **head, int key, int position){
+	NODE *new_node = new NODE;
+	new_node->key = key;
+	NODE *temp = *head;
+	if(position == 0){
+		new_node->next = temp;
+		*head = new_node;
+		return;
+	}
+	else{
+		for(int i=1; i<position; i++){
+			temp = temp->next;
+		}
+		if(temp->next == NULL){
+			temp->next = new_node;
+			return;
+		}
+		else{
+			new_node->next = temp->next;
+			temp->next = new_node;
+			return;
+		}
+	}
+}
 
 int main(int argc, const char *argv[]){
 	NODE *head = create_node(1);
@@ -74,6 +98,10 @@ int main(int argc, const char *argv[]){
 	append(&head, create_node(4));
 	print_linked_list(head);
 	reverse_linked_list(&head);
+	print_linked_list(head);
+	insertAtAnyPosition(&head, 5, 0);
+	print_linked_list(head);
+	insertAtAnyPosition(&head, 6, 4);
 	print_linked_list(head);
 	return 0;
 }
