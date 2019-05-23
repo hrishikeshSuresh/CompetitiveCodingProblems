@@ -50,17 +50,30 @@ void pop_back(NODE **head){
 }
 
 // reverse a node
-void reverse_linked_list(NODE **head){
+void reverse_linked_list_recursive(NODE **head){
 	if(*head == NULL)	return;
 	NODE *first, *rest;
 	first = *head;
 	rest = first->next;
 	if(rest == NULL)	return;
-	reverse_linked_list(&rest);
+	reverse_linked_list_recursive(&rest);
 	first->next->next = first;
 	first->next = NULL;
 	*head = rest;
 	return;
+}
+
+// reverse linked list iteratively
+void reverse_linked_list(NODE **head){
+	NODE *curr, *prev, *next;
+	curr = *head;
+	while(curr != NULL){
+		next = curr->next;
+		curr->next = prev;
+		prev = curr;
+		curr = next;
+	}
+	*head = prev;
 }
 
 void insertAtAnyPosition(NODE **head, int key, int position){
@@ -97,7 +110,8 @@ int main(int argc, const char *argv[]){
 	print_linked_list(head);
 	append(&head, create_node(4));
 	print_linked_list(head);
-	reverse_linked_list(&head);
+	reverse_linked_list_recursive(&head);
+	//reverse_linked_list(&head);
 	print_linked_list(head);
 	insertAtAnyPosition(&head, 5, 0);
 	print_linked_list(head);
