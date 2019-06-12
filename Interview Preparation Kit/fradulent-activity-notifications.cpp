@@ -1,75 +1,116 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
+
+template <typename T> void printArray(std::vector<T> const &v) {
+  for (auto i : v)
+    std::cout << i << " ";
+  std::cout << "\n";
+}
+
+template <typename T>
+std::vector<T> slice(std::vector<T> const &v, int m, int n) {
+  auto first = v.cbegin() + m;
+  auto end = v.cbegin() + n + 1;
+  std::vector<T> vec(first, end);
+  return vec;
+}
+
+float countingSortAndMedian(std::vector<int> arr, int d, int p, int flag) {
+  int max_value = *std::max_element(arr.begin(), arr.end());
+  int min_value = *std::min_element(arr.begin(), arr.end());
+  int n = max_value - min_value + 1;
+  float *fre = (float *)malloc(sizeof(float) * n);
+  memset(fre, 0, sizeof(float) * n);
+  for (u_int i = 0; i < arr.size(); i++)
+    fre[arr[i] - min_value]++;
+  std::vector<float> sorted;
+  for (int i = 0; i < n; i++) {
+    while (fre[i] > 0) {
+      sorted.push_back(i + min_value);
+      fre[i]--;
+    }
+  }
+  return (flag) ? (sorted[p] + sorted[p - 1]) / 2 : sorted[p];
+}
+
+// Complete the activityNotifications function below.
+int activityNotifications(std::vector<int> expenditure, int d) {
+  int notifications = 0;
+  int p = d/2;
+  int flag = (d % 2 == 0);
+  for (u_int i = 0; i < expenditure.size() - d; i++) {
+    std::vector<int> curr = slice(expenditure, i, i + d - 1);
+    float median = countingSortAndMedian(curr, d, p, flag);
+    if (expenditure[d + i] >= 2 * median) {
+      notifications++;
+    }
+  }
+  return notifications;
+}
 
 using namespace std;
+std::vector<string> split_string(string);
 
-int median(deque<int> t, int window_half, bool flag ){
-    int median_val;
-    if(flag){
-        median_val = (t[window_half] + t[window_half + 1])/2;
-    }
-    else{
-        median_val = t[window_half];
-    }
-	return median_val;
+int main() {
+  ofstream fout(getenv("OUTPUT_PATH"));
+
+  string nd_temp;
+  getline(cin, nd_temp);
+
+  vector<string> nd = split_string(nd_temp);
+
+  int n = stoi(nd[0]);
+
+  int d = stoi(nd[1]);
+
+  string expenditure_temp_temp;
+  getline(cin, expenditure_temp_temp);
+
+  vector<string> expenditure_temp = split_string(expenditure_temp_temp);
+
+  vector<int> expenditure(n);
+
+  for (int i = 0; i < n; i++) {
+    int expenditure_item = stoi(expenditure_temp[i]);
+
+    expenditure[i] = expenditure_item;
+  }
+
+  int result = activityNotifications(expenditure, d);
+
+  fout << result << "\n";
+
+  fout.close();
+
+  return 0;
 }
 
-int counting_sort(int arr[], int n, int notifications, int start, int stop, bool flag, int window_half){
-    int max_val = *max_element(arr+start, arr+stop);
-    //cout << "Max. element is " << max_val << endl;
-    int *aux = (int*)malloc(sizeof(int)*(max_val+1));
-    //memset(aux, 0, sizeof(aux));
-    for(int i=0; i<=max_val; i++)
-        aux[i] = 0;
-    for(int i=start; i<stop; i++){
-        //cout << arr[i] << " ";
-        aux[arr[i]]++;
-    }
-    //cout << endl;
-    int *sorted_arr = (int*)malloc(sizeof(int)*(stop-start));
-    int j=0;
-    memset(sorted_arr, 0, sizeof(sorted_arr));
-    //for(int i=0; i<=max_val; i++){
-    //    cout << i << " " << aux[i] << endl;
-    //}
-    for(int i=0; i<=max_val; i++){
-        //cout << aux[i] << endl;
-        int tmp = aux[i];
-        while(tmp--){
-            sorted_arr[j] = i;
-            j++;
-        }
-    }
-    //for(int i=0; i<j; i++)
-    //    cout << sorted_arr[i] << " ";
-    //cout << endl;
-    float median_val;
-    if(flag){
-        //cout << "here" << endl;
-        median_val = float((sorted_arr[window_half] + sorted_arr[window_half - 1]))/2;
-    }
-    else{
-        median_val = sorted_arr[window_half];
-    }
-    //cout << "Median value " << median_val << " Next transaction " << arr[stop] << endl;
-    if(arr[stop]>=2*median_val)
-        notifications++;
-    return notifications;
+vector<string> split_string(string input_string) {
+  string::iterator new_end =
+      unique(input_string.begin(), input_string.end(),
+             [](const char &x, const char &y) { return x == y and x == ' '; });
+
+  input_string.erase(new_end, input_string.end());
+
+  while (input_string[input_string.length() - 1] == ' ') {
+    input_string.pop_back();
+  }
+
+  vector<string> splits;
+  char delimiter = ' ';
+
+  size_t i = 0;
+  size_t pos = input_string.find(delimiter);
+
+  while (pos != string::npos) {
+    splits.push_back(input_string.substr(i, pos - i));
+
+    i = pos + 1;
+    pos = input_string.find(delimiter, i);
+  }
+
+  splits.push_back(
+      input_string.substr(i, min(pos, input_string.length()) - i + 1));
+
+  return splits;
 }
 
-int main(int argc, const char *argv[]){
-    int N, a, d, median_val, notifications;
-    cin >> N >> d;
-    int window_half = d/2;
-    bool flag = false;
-    int arr[N];
-    if(d%2 == 0){
-        flag = true;
-    }
-    for(int i=0; i<N; i++)
-        cin >> arr[i];
-    notifications = 0;
-    for(int m=0; m<N-d; m++){
-        notifications = counting_sort(arr, N, notifications, m, m+d, flag, window_half);
-    }
-    cout << notifications << endl;
-}

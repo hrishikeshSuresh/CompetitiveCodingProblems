@@ -8,22 +8,13 @@ vector<string> split_string(string);
 vector<long> riddle(vector<long> arr) {
     vector<long> all_minimums;
     long n = arr.size();
-    // for window size = 1
-    all_minimums.push_back(*max_element(arr.begin(), arr.end()));
-    // for window size = 2....n
-    for (long c_window = 2; c_window <= n; c_window++) {
-        deque<long> window;
+    for (long c_window = 0; c_window < n; c_window++) {
         vector<long> inter_min;
-        for (long i = 0; i < n; i++) {
-            if (window.size() == c_window) {
-                inter_min.push_back(*min_element(window.begin(), window.end()));
-                window.pop_front();
-            }
-            window.push_back(arr[i]);
-        }
-        if(window.size() > 0){
-            inter_min.push_back(*min_element(window.begin(), window.end()));
-            window.pop_front();
+        vector<long>::iterator itr = arr.begin();
+        for (; itr != arr.end()-c_window; ++itr) {
+            vector<long> vec;
+            vec.assign(itr, itr+c_window+1);
+            inter_min.push_back(*min_element(vec.begin(), vec.end()));
         }
         all_minimums.push_back(*max_element(inter_min.begin(), inter_min.end()));
     }
