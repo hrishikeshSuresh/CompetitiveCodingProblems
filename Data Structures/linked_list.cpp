@@ -76,6 +76,7 @@ void reverse_linked_list(NODE **head){
 	*head = prev;
 }
 
+// insert at any given position
 void insertAtAnyPosition(NODE **head, int key, int position){
 	NODE *new_node = new NODE;
 	new_node->key = key;
@@ -99,6 +100,74 @@ void insertAtAnyPosition(NODE **head, int key, int position){
 			return;
 		}
 	}
+}
+
+// insert node
+void insert(NODE **head, int data){
+	NODE *temp = new NODE;
+	temp->key = data;
+	temp->next = NULL;	
+	if(*head == nullptr){
+		*head = temp;
+		return;
+	}
+	NODE *p = *head;
+	while(p!=NULL)
+		p = p->next;
+	p = temp;
+	return;
+}
+
+// get value at nth index
+int GetNth(NODE **head, int n){
+	NODE *p = *head;
+	int i;
+	for(i=0; i<n && p->next!=NULL; i++)
+		p = p->next;
+	if(i < n)
+		throw "n greater than linked list length";
+	return p->key;
+}
+
+// get nth value from back
+int nthFromBack(NODE *head, int n){
+	int len = 0;
+	NODE *p = head;
+	while(p!=NULL){
+		p=p->next;
+		len++;
+	}
+	if(len-n<0) throw "length error";
+	for(int i=0; i<len-n; i++)
+		p = p->next;
+	return p->key;
+}
+
+// get value at mid-point
+int midPoint(NODE *head){
+	NODE *slow = head;
+	NODE *fast = head;
+	while(fast!=NULL){
+		fast = fast->next;
+		if(fast!=NULL){
+			slow=slow->next;
+			fast=fast->next;
+		}
+	}
+	return slow->key;
+}
+
+// detect a loop
+bool isThereLoop(NODE *head){
+	NODE *slow = head;
+	NODE *fast = head;
+	while(slow && fast && fast->next){
+		slow = slow->next;
+		fast = fast->next->next;
+		if(slow == fast)
+			return 1;
+	}
+	return 0;
 }
 
 int main(int argc, const char *argv[]){
